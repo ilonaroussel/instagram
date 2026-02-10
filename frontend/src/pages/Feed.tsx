@@ -29,7 +29,6 @@ const Posts = () => {
 
       setPosts(prev => [...prev, ...data]);
       setOffset(prev => prev + data.length);
-      console.log("fetchPosts appelé ! offset =", offset);
 
       if (data.length < PAGE_SIZE) setHasMore(false);
     } catch (err) {
@@ -71,6 +70,10 @@ useEffect(() => {
       )}
 
       {!hasMore && <p>Plus de posts à afficher</p>}
+      
+      {!loading && !error && posts.length === 0 && (
+        <p>Aucun post à afficher</p>
+      )}
     </div>
   );
 };
