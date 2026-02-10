@@ -19,6 +19,20 @@ const Posts = () => {
       .catch(() => setError("Failed to load posts"));
   }, []);
 
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  fetch("http://localhost:3001/posts", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(res => res.json())
+    .then(setPosts)
+    .catch(() => setError("Unauthorized"));
+}, []);
+
+
   if (error) return <p>{error}</p>;
 
   return (

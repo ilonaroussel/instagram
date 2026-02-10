@@ -12,23 +12,26 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!email || !password) {
-      setError("Email and password are required");
-      return;
-    }
+  try {
+    const res = await fetch("http://localhost:3001/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-    try {
-      const user = await api.login({ email, password });
+    if (!res.ok) throw new Error("Login failed");
 
-  localStorage.setItem("user", JSON.stringify(user));
+    const data = await res.json();
 
-  navigate("/feed");
-    } catch (err: any) {
-      setError(err.message || "Login failed");
-    }
-  };
+    localStorage.setItem("token", data.token);
+
+    navigate("/feed");
+  } catch (err: any) {
+    setError(err.message);
+  }
+};
 
   return (
     <div style={{ maxWidth: 400, margin: "0 auto", padding: "2rem" }}>
