@@ -10,14 +10,23 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-// GET all posts with username
+// Get all post
 app.get("/posts", (req, res) => {
-  const postsWithUsername = posts.map(post => {
+  const offset = parseInt(req.query.offset as string) || 0;
+  const limit = parseInt(req.query.limit as string) || 5;
+  
+  // Tri décroissant par date
+  const sortedPosts = [...posts].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  // Pagination
+  const paginatedPosts = sortedPosts.slice(offset, offset + limit);
+
+  // Add username
+  const postsWithUsername = paginatedPosts.map(post => {
     const user = users.find(u => u.id === post.userId);
-    return {
-      ...post,
-      username: user ? user.username : "Unknown"
-    };
+    return { ...post, username: user ? user.username : "Unknown" };
   });
 
   res.json(postsWithUsername);
