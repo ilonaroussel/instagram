@@ -1,4 +1,3 @@
-
 import { registerUser, loginUser } from "../../backend/src/services/auth";
 
 export const api = {
