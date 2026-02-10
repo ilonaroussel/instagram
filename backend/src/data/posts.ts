@@ -1,5 +1,6 @@
 import type { Post } from "../bdd/bdd"
 
+
 export const posts: Post[] = [
   {
     id: 1,

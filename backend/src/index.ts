@@ -3,6 +3,7 @@ import cors from "cors";
 import jwt from "jsonwebtoken";
 
 import { posts } from "./data/posts";
+import { addPost } from "./data/addPost"
 import { loginUser } from "./services/auth";
 import { registerUser } from "./services/auth";
 import { auth } from "./middleware/auth";
@@ -82,3 +83,12 @@ app.get("/posts", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+app.post("/posts", (req, res) => {
+  try {
+    const post = addPost(req.body.content, req.body.userId)
+    res.status(201).json(post)
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message })
+  }
+})
