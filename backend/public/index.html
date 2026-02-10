@@ -21,7 +21,7 @@
             <strong>User ${post.userId}</strong>
             (${new Date(post.createdAt).toLocaleDateString()})
             <br/>
-            ${post.content} ❤️ ${post.likes}
+            ${post.content} ${post.likes}
           `;
             ul.appendChild(li);
           });

@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from "react"
 import './App.css'
 
+type Post = {
+  id: number;
+  userId: number;
+  content: string;
+  likes: number;
+  createdAt: string;
+};
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("http://localhost:5173/posts");
+        if (!res.ok) throw new Error("Erreur serveur");
+
+        const data: Post[] = await res.json();
+        setPosts(data);
+      }finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  if (loading) return <p>Chargement...</p>;
+  if (posts.length === 0) return <p>Aucun post</p>;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div style={{ padding: "2rem" }}>
+      <h1>Posts</h1>
+
+      {posts.map((post) => (
+        <div
+          key={post.id}
+          style={{
+            border: "1px solid #ddd",
+            padding: "1rem",
+            marginBottom: "1rem",
+          }}
+        >
+          <strong>User {post.userId}</strong>
+          <p>{post.content}</p>
+          <small>
+            {new Date(post.createdAt).toLocaleDateString()} – ❤️ {post.likes}
+          </small>
+        </div>
+      ))}
+    </div>
+  );
 }
 
-export default App
+export default App;
+
