@@ -40,11 +40,27 @@ const Register: React.FC = () => {
     }
 
     try {
-      await api.register({ email, username, password });
-  navigate("/login");
-    } catch (err: any) {
-      setError(err.message || "Registration failed");
-    }
+  const res = await fetch("http://localhost:3001/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, username, password }),
+  });
+
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.message || "Registration failed");
+  }
+
+  const data = await res.json();
+
+  
+  localStorage.setItem("token", data.token);
+
+  navigate("/feed");
+} catch (err: any) {
+  setError(err.message);
+}
+
   };
 
   return (
