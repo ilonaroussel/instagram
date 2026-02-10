@@ -1,4 +1,4 @@
-import { users } from "../src/data/users";
+import { users } from "../data/users";
 import type { User } from "../bdd/bdd";
 
 export function registerUser(email: string, username: string, password: string): User {

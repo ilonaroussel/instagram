@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 
-type Post = {
+type PostWithUsername = {
   id: number;
   userId: number;
+  username: string;
   content: string;
   likes: number;
   createdAt: string;
 };
 
+
 const Posts = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [error, setError] = useState("");
+const [posts, setPosts] = useState<PostWithUsername[]>([]);
+const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:3001/posts")
@@ -21,21 +23,17 @@ const Posts = () => {
 
   if (error) return <p>{error}</p>;
 
-  return (
-    <div>
-      <h1>Posts</h1>
-      <ul>
-        {posts.map(post => (
-          <li key={post.id}>
-            <strong>User {post.userId}</strong>
-            {" "}({new Date(post.createdAt).toLocaleDateString()})
-            <br />
-            {post.content} ❤️ {post.likes}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+return (
+  <ul>
+    {posts.map(post => (
+      <li key={post.id}>
+        <strong>{post.username}</strong> ({new Date(post.createdAt).toLocaleDateString()})
+        <br />
+        {post.content}
+      </li>
+    ))}
+  </ul>
+);
 };
 
 export default Posts;

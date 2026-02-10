@@ -14,5 +14,12 @@ export const posts: Post[] = [
     content: "Golden hour ✨",
     likes: 34,
     createdAt: "2026-02-02"
+  },
+  {
+    id: 3,
+    userId: 2,
+    content: "Super",
+    likes: 3,
+    createdAt: "2026-02-04"
   }
 ]
