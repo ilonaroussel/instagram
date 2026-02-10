@@ -1,21 +1,24 @@
 import express from "express";
-import cors from "cors";
-import { posts } from "./data/posts";
-import type { Post } from "./bdd/bdd";
+import path from "path";
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-
 const PORT = 3000;
 
+// servir les fichiers statiques
+app.use(express.static(path.join(__dirname, "../public")));
+
 app.get("/posts", (req, res) => {
-  const sortedPosts: Post[] = [...posts].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-  res.json(sortedPosts);
+  res.json([
+    {
+      id: 1,
+      userId: 1,
+      content: "Mon premier post 👋",
+      likes: 12,
+      createdAt: "2026-02-01"
+    }
+  ]);
 });
 
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur http://localhost:${PORT}`);
+  console.log(`Serveur lancé sur http://localhost:${PORT}`);
 });
