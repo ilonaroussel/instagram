@@ -1,14 +1,13 @@
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
-
 import { posts } from "./data/posts";
 import { users } from "./data/users";
 import { addPost } from "./data/addPost"
 import { loginUser } from "./services/auth";
 import { registerUser } from "./services/auth";
 import { auth } from "./middleware/auth";
-import { users } from "./data/users";
+
 
 
 const app = express();
