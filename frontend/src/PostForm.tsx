@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import type { Post } from '../../backend/src/bdd/bdd'
+import { useEffect, useState } from 'react'
+import type { Post, User } from '../../backend/src/bdd/bdd'
 
 interface PostFormProps {
   onPostCreated: (post: Post) => void
@@ -8,10 +8,33 @@ interface PostFormProps {
 export default function PostForm({ onPostCreated }: PostFormProps) {
   const [content, setContent] = useState("")
   const [error, setError] = useState("")
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Utilisateur non connecté");
+      return;
+    }
+
+    // connected user info
+    fetch("http://localhost:3001/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(setUser)
+      .catch(() => setError("Chargement de l'utilisateur échoué"));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+
+    // test if user is connected
+    if (!user) {
+      setError("Utilisateur non connecté")
+      return
+    }
 
     if (!content.trim()) {
       setError("Le contenu ne peut pas être vide")
@@ -30,7 +53,7 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
       const res = await fetch('http://localhost:3001/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content, userId: 1 })
+        body: JSON.stringify({ content, userId: user.id }),
       })
       if (!res.ok) throw new Error('Erreur serveur')
       const newPost: Post = await res.json()
