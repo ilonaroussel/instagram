@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import './../index.css'
 import './../App.css'
@@ -21,6 +21,8 @@ const Posts = () => {
   const [error, setError] = useState("");
   const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
+  const didFetch = useRef(false);
+
 
 const fetchPosts = async () => {
   setLoading(true);
@@ -42,17 +44,17 @@ const fetchPosts = async () => {
 
     const data: PostWithUsername[] = await res.json();
 
-    // Filtrer les postes doublons
-    setPosts(prev => {
-      const existingIds = new Set(prev.map(p => p.id));
-      const filtered = data.filter(p => !existingIds.has(p.id));
-      setOffset(prev => prev + filtered.length);
-      return [...prev, ...filtered];
-    });
+    // add posts
+    setPosts(prev => [...prev, ...data]);
 
+    // Incrémenter l'offset selon ce que le backend a renvoyé
+    setOffset(prev => prev + data.length);
+
+    // Si le backend renvoie moins que PAGE_SIZE → plus de posts
     if (data.length < PAGE_SIZE) {
       setHasMore(false);
     }
+
   } catch (err) {
     console.error(err);
     setError("Impossible de charger les postes");
@@ -62,7 +64,10 @@ const fetchPosts = async () => {
 };
 
   useEffect(() => {
-    fetchPosts();
+    if (!didFetch.current) {
+      fetchPosts();
+      didFetch.current = true;
+    }
   }, []);
 
   if (error) return <p>{error}</p>;

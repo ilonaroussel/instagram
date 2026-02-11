@@ -1,4 +1,3 @@
-// Login.tsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 //import { api } from "../auth";
@@ -57,7 +56,7 @@ const Login: React.FC = () => {
               placeholder="Mot de passe"
             />
           </div>
-          <button type="submit">Login</button>
+          <button type="submit">Connexion</button>
         </form>
         <p>
           Vous n'avez pas encore de compte ? <Link to="/register">Inscription</Link>

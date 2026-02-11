@@ -19,13 +19,13 @@ const Navbar = () => {
 
       <div>
         {token ? (
-          <button onClick={handleLogout}>Logout</button>
+          <button onClick={handleLogout}>Déconnexion</button>
         ) : (
           <>
             <Link to="/login" style={{ marginRight: "1rem" }}>
-              Login
+              Connexion
             </Link>
-            <Link to="/register">Register</Link>
+            <Link to="/register">Inscription</Link>
           </>
         )}
       </div>

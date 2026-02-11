@@ -1,16 +1,15 @@
-// Register.tsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { api } from "../auth";
+//import { api } from "../auth";
 
 const Register: React.FC = () => {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
 
   // Basic password validation
   const passwordValid = (pwd: string) => {
@@ -117,7 +116,7 @@ const Register: React.FC = () => {
               </p>
             )}
           </div>
-          <button type="submit">Register</button>
+          <button type="submit">Inscription</button>
         </form>
         <p>
           Vous avez déjà un compte ? <Link to="/login">Connexion</Link>
