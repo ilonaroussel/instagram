@@ -15,6 +15,9 @@ function App(){
   const handlePostCreated = (post: unknown) => {
     console.log("Post created:", post);
   };
+  const handleCommentCreated = (post: unknown) => {
+    console.log("Comment created:", post);
+  };
 
   return (
     <BrowserRouter>
@@ -26,7 +29,7 @@ function App(){
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/post/:id" element={<PostDetails />} />
+        <Route path="/post/:id" element={<PostDetails/>} />
       </Routes>
     </BrowserRouter>
   );

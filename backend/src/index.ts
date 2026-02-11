@@ -7,6 +7,9 @@ import { addPost } from "./data/addPost"
 import { loginUser } from "./services/auth";
 import { registerUser } from "./services/auth";
 import { auth } from "./middleware/auth";
+import { addComment } from "./data/addComment";
+import { comments } from "./data/comments";
+
 
 
 
@@ -122,3 +125,38 @@ app.get("/posts/:id", (req, res) => {
 
   res.json(post);
 });
+
+// Get comments for a post
+app.get("/posts/:id/comments", (req, res) => {
+  const postId = Number(req.params.id);
+
+  const postComments = comments
+    .filter(c => c.postId === postId)
+    .map(comment => {
+      const user = users.find(u => u.id === comment.userId);
+      return { ...comment, username: user?.username || "Utilisateur" };
+    });
+
+  res.json(postComments);
+});
+
+// Create a new comment
+app.post("/posts/:id/comments", auth, (req, res) => {
+  const postId = Number(req.params.id);
+  const userId = (req as any).user.id;
+  const { content } = req.body;
+
+  try {
+    const newComment = addComment(postId, userId, content);
+    const user = users.find(u => u.id === userId);
+
+    console.log("✅ Comments array after new comment:", comments);
+
+    res.status(201).json({ ...newComment, username: user?.username || "Utilisateur" });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+
+
