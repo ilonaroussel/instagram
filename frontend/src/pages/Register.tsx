@@ -64,63 +64,65 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "0 auto", padding: "2rem" }}>
-      <h2>Register</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          {/* Live password validation */}
-          {password && (
-            <p style={{ color: "orange", fontSize: "0.9rem" }}>
-              {passwordValid(password)}
-            </p>
-          )}
-        </div>
-        <div>
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-          {/* Match validation */}
-          {confirmPassword && confirmPassword !== password && (
-            <p style={{ color: "orange", fontSize: "0.9rem" }}>
-              Passwords do not match
-            </p>
-          )}
-        </div>
-        <button type="submit">Register</button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+    <div className="container">
+      <div className="register">
+        <h2>Register</h2>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="FormRegister">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Email"
+            />
+          </div>
+          <div className="FormRegister">
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              placeholder="Pseudo"
+            />
+          </div>
+          <div className="FormRegister">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="Mot de passe"
+            />
+            {/* Live password validation */}
+            {password && (
+              <p style={{ color: "orange", fontSize: "0.9rem" }}>
+                {passwordValid(password)}
+              </p>
+            )}
+          </div>
+          <div className="FormRegister">
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              placeholder="Confirmer votre mot de passe"
+            />
+            {/* Match validation */}
+            {confirmPassword && confirmPassword !== password && (
+              <p style={{ color: "orange", fontSize: "0.9rem" }}>
+                Passwords do not match
+              </p>
+            )}
+          </div>
+          <button type="submit">Register</button>
+        </form>
+        <p>
+          Vous avez déjà un compte ? <Link to="/login">Connexion</Link>
+        </p>
+      </div>
     </div>
   );
 };

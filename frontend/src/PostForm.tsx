@@ -42,36 +42,37 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ccc' }}>
-      <h3>Créer un post</h3>
+    <div className='container'>
+      <form onSubmit={handleSubmit} className="FormPost">
+        <h1>Créer un poste</h1>
 
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Écrivez votre post ici..."
-        style={{ width: '100%', height: '100px', padding: '10px', marginBottom: '10px' }}
-      />
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Écrivez votre poste ..."
+          style={{ width: '100%', height: '100px', padding: '10px', marginBottom: '5px' }}
+        />
 
-      <div style={{ marginBottom: '10px', fontSize: '12px', color: '#999' }}>
-        {content.length}/500
-      </div>
+        <div style={{ marginBottom: '10px', fontSize: '12px', color: '#999' }}>
+          {content.length}/500
+        </div>
 
-      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+        {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
 
-      <button
-        type="submit"
-        disabled={!content.trim()}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: content.trim() ? '#007bff' : '#ccc',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: content.trim() ? 'pointer' : 'not-allowed',
-        }}
-      >
-        Poster
-      </button>
-    </form>
+        <button
+          type="submit"
+          disabled={!content.trim()}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: content.trim() ? '#007bff' : 'black',
+            color: 'white',
+            border: 'none',
+            cursor: content.trim() ? 'pointer' : 'not-allowed',
+          }}
+        >
+          Publier
+        </button>
+      </form>
+    </div>
   )
 }
