@@ -35,7 +35,7 @@ const Login: React.FC = () => {
   return (
     <div className="container">
       <div className="login">
-        <h2>Login</h2>
+        <h2>Connexion</h2>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="FormLogin">

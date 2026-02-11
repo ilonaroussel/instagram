@@ -74,7 +74,7 @@ const fetchPosts = async () => {
 
   return (
     <div className="container">
-      <h1>Postes</h1>
+      <h2>Publications</h2>
 
       {posts.map(post => (
         <div className="CardPost"
@@ -98,10 +98,10 @@ const fetchPosts = async () => {
         </button>
       )}
 
-      {!hasMore && <p>Plus de postes à afficher</p>}
+      {!hasMore && <p>Plus de publications à afficher</p>}
 
       {!loading && !error && posts.length === 0 && (
-        <p>Aucun poste à afficher</p>
+        <p>Aucune publication à afficher</p>
       )}
     </div>
   );

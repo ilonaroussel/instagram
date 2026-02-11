@@ -27,7 +27,7 @@ const Profile = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("Not logged in");
+      setError("Vous n'êtes pas connecté");
       return;
     }
 
@@ -37,7 +37,7 @@ const Profile = () => {
     })
       .then(res => res.json())
       .then(setUser)
-      .catch(() => setError("Failed to load user info"));
+      .catch(() => setError("Échec du chargement des informations utilisateur"));
 
     // Fetch my posts
     fetch("http://localhost:3001/my-posts", {
@@ -45,19 +45,19 @@ const Profile = () => {
     })
       .then(res => res.json())
       .then(setPosts)
-      .catch(() => setError("Failed to load posts"));
+      .catch(() => setError("Échec du chargement des publications"));
   }, []);
 
   if (error) return <p>{error}</p>;
-  if (!user) return <p>Loading profile...</p>;
+  if (!user) return <p>Chargement du profil...</p>;
 
   return (
     <div className="container">
-      <h1>Mon profil</h1>
-      <h2>{user.username}</h2>
+      <h2>Mon profil</h2>
+      <h3>{user.username}</h3>
       <p>Email: {user.email}</p>
 
-      <h3>Mes postes</h3>
+      <h3>Mes publications</h3>
         {posts.map(post => (
           <div
           className="CardPost"

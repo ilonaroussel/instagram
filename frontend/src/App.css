@@ -8,6 +8,7 @@
 
 .container-fluid {
   width: 100%;
+  padding-bottom: 50px;
 }
 
 .CardPost{
@@ -64,6 +65,12 @@ nav{
 
 button{
   border-radius: 5px;
+}
+
+.DetailPost{
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
 }
 
 @media (min-width: 576px) {

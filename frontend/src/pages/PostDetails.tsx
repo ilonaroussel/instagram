@@ -28,12 +28,16 @@ const PostDetails = () => {
   if (!post) return <p>Chargement...</p>;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2>Détail du post</h2>
-      <strong>{post.username}</strong>
-      <p>{post.content}</p>
-      <p>Likes: {post.likes}</p>
-      <p>{new Date(post.createdAt).toLocaleString()}</p>
+    <div className="container">
+      <div className="DetailPost">
+        <div>
+          <h2>Détail de la publication</h2>
+          <strong>{post.username}</strong>
+          <p>{post.content}</p>
+          <p>J'aimes: {post.likes}</p>
+          <p>{new Date(post.createdAt).toLocaleString()}</p>
+        </div>
+      </div>
     </div>
   );
 };

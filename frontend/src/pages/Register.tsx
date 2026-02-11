@@ -65,7 +65,7 @@ const Register: React.FC = () => {
   return (
     <div className="container">
       <div className="register">
-        <h2>Register</h2>
+        <h2>Inscription</h2>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="FormRegister">
@@ -112,7 +112,7 @@ const Register: React.FC = () => {
             {/* Match validation */}
             {confirmPassword && confirmPassword !== password && (
               <p style={{ color: "orange", fontSize: "0.9rem" }}>
-                Passwords do not match
+                Mot de passe différent
               </p>
             )}
           </div>
