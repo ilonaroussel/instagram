@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Post, User } from '../../backend/src/bdd/bdd'
+import type { Post, User } from '../../../backend/src/bdd/bdd'
 
 interface PostFormProps {
   onPostCreated: (post: Post) => void
@@ -110,5 +110,6 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
         {loading ? "Publication..." : "Poster"}   {/* texte dynamique */}
       </button>
     </form>
+    </div>
   )
 }
