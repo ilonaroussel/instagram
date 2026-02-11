@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import PostDetails from "./pages/PostDetails";
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
 
 
 
