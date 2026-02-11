@@ -110,3 +110,15 @@ app.post("/posts", (req, res) => {
     res.status(400).json({ message: (error as Error).message })
   }
 })
+
+app.get("/posts/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const post = posts.find(p => p.id === id);
+
+  if (!post) {
+    return res.status(404).json({ message: "Post introuvable" });
+  }
+
+  res.json(post);
+});

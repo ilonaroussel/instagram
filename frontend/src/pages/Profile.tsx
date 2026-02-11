@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 type User = {
   id: number;
@@ -19,6 +21,8 @@ const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -56,12 +60,20 @@ const Profile = () => {
       <h3>Mes posts</h3>
       <ul>
         {posts.map(post => (
-          <li key={post.id}>
-            {post.content} ❤️ {post.likes}{" "}
+          <li
+            key={post.id}
+            onClick={() => navigate(`/post/${post.id}`)}
+            style={{
+              cursor: "pointer",
+              marginBottom: "8px"
+            }}
+          >
+            {post.content} {post.likes}{" "}
             ({new Date(post.createdAt).toLocaleDateString()})
           </li>
         ))}
       </ul>
+
     </div>
   );
 };

@@ -6,10 +6,11 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
+import PostDetails from "./pages/PostDetails";
 
 
 function App(){
-  const handlePostCreated = (post: any) => {
+  const handlePostCreated = (post: unknown) => {
     console.log("Post created:", post);
   };
 
@@ -22,6 +23,7 @@ function App(){
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/post/:id" element={<PostDetails />} />
       </Routes>
     </BrowserRouter>
   );

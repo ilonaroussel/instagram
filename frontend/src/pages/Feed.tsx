@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type PostWithUsername = {
   id: number;
@@ -18,11 +19,24 @@ const Posts = () => {
   const [error, setError] = useState("");
   const [hasMore, setHasMore] = useState(true);
 
+  const navigate = useNavigate();
+
   const fetchPosts = async () => {
     setLoading(true);
     setError("");
+
     try {
-      const res = await fetch(`http://localhost:3001/posts?offset=${offset}&limit=${PAGE_SIZE}`);
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        `http://localhost:3001/posts?offset=${offset}&limit=${PAGE_SIZE}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       if (!res.ok) throw new Error("Erreur serveur");
 
       const data: PostWithUsername[] = await res.json();
@@ -30,7 +44,9 @@ const Posts = () => {
       setPosts(prev => [...prev, ...data]);
       setOffset(prev => prev + data.length);
 
-      if (data.length < PAGE_SIZE) setHasMore(false);
+      if (data.length < PAGE_SIZE) {
+        setHasMore(false);
+      }
     } catch (err) {
       console.error(err);
       setError("Impossible de charger les posts");
@@ -39,28 +55,9 @@ const Posts = () => {
     }
   };
 
-  const didFetch = useRef(false);
-
-useEffect(() => {
-  if (!didFetch.current) {
-    fetchPosts();
-    didFetch.current = true;
-  }
-}, []);
-  
   useEffect(() => {
-  const token = localStorage.getItem("token");
-
-  fetch("http://localhost:3001/posts", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then(res => res.json())
-    .then(setPosts)
-    .catch(() => setError("Unauthorized"));
-}, []);
-
+    fetchPosts();
+  }, []);
 
   if (error) return <p>{error}</p>;
 
@@ -71,22 +68,35 @@ useEffect(() => {
       {posts.map(post => (
         <div
           key={post.id}
-          style={{ border: "1px solid #ddd", marginBottom: "1rem", padding: "1rem", borderRadius: "8px" }}
+          onClick={() => navigate(`/post/${post.id}`)}
+          style={{
+            border: "1px solid #ddd",
+            marginBottom: "1rem",
+            padding: "1rem",
+            borderRadius: "8px",
+            cursor: "pointer",
+            transition: "0.2s",
+          }}
         >
-          <strong>{post.username}</strong> ({new Date(post.createdAt).toLocaleDateString()})
+          <strong>{post.username}</strong>{" "}
+          ({new Date(post.createdAt).toLocaleDateString()})
           <p>{post.content}</p>
         </div>
       ))}
 
       {loading && <p>Chargement...</p>}
-      {error && <p>{error}</p>}
 
       {hasMore && !loading && !error && (
-        <button onClick={fetchPosts} style={{ padding: "0.5rem 1rem" }}>Charger plus</button>
+        <button
+          onClick={fetchPosts}
+          style={{ padding: "0.5rem 1rem" }}
+        >
+          Charger plus
+        </button>
       )}
 
       {!hasMore && <p>Plus de posts à afficher</p>}
-      
+
       {!loading && !error && posts.length === 0 && (
         <p>Aucun post à afficher</p>
       )}
