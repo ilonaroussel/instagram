@@ -52,28 +52,22 @@ const Profile = () => {
   if (!user) return <p>Loading profile...</p>;
 
   return (
-    <div>
+    <div className="container">
       <h1>Mon profil</h1>
       <h2>{user.username}</h2>
       <p>Email: {user.email}</p>
 
-      <h3>Mes posts</h3>
-      <ul>
+      <h3>Mes postes</h3>
         {posts.map(post => (
-          <li
+          <div
+          className="CardPost"
             key={post.id}
             onClick={() => navigate(`/post/${post.id}`)}
-            style={{
-              cursor: "pointer",
-              marginBottom: "8px"
-            }}
           >
             {post.content} {post.likes}{" "}
             ({new Date(post.createdAt).toLocaleDateString()})
-          </li>
+          </div>
         ))}
-      </ul>
-
     </div>
   );
 };

@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import PostDetails from "./pages/PostDetails";
+import Navbar from "./components/navbar";
+
 
 
 function App(){
@@ -16,6 +18,7 @@ function App(){
 
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route path="/PostForm" element={<PostForm onPostCreated={handlePostCreated} />} />
         <Route path="/" element={<Feed />} />

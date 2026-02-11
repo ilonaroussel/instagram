@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './../index.css'
+import './../App.css'
 
 type PostWithUsername = {
   id: number;
@@ -18,42 +20,46 @@ const Posts = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [hasMore, setHasMore] = useState(true);
-
   const navigate = useNavigate();
 
-  const fetchPosts = async () => {
-    setLoading(true);
-    setError("");
+const fetchPosts = async () => {
+  setLoading(true);
+  setError("");
 
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const token = localStorage.getItem("token");
 
-      const res = await fetch(
-        `http://localhost:3001/posts?offset=${offset}&limit=${PAGE_SIZE}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!res.ok) throw new Error("Erreur serveur");
-
-      const data: PostWithUsername[] = await res.json();
-
-      setPosts(prev => [...prev, ...data]);
-      setOffset(prev => prev + data.length);
-
-      if (data.length < PAGE_SIZE) {
-        setHasMore(false);
+    const res = await fetch(
+      `http://localhost:3001/posts?offset=${offset}&limit=${PAGE_SIZE}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    } catch (err) {
-      console.error(err);
-      setError("Impossible de charger les posts");
-    } finally {
-      setLoading(false);
+    );
+
+    if (!res.ok) throw new Error("Erreur serveur");
+
+    const data: PostWithUsername[] = await res.json();
+
+    // Filtrer les postes doublons
+    setPosts(prev => {
+      const existingIds = new Set(prev.map(p => p.id));
+      const filtered = data.filter(p => !existingIds.has(p.id));
+      setOffset(prev => prev + filtered.length);
+      return [...prev, ...filtered];
+    });
+
+    if (data.length < PAGE_SIZE) {
+      setHasMore(false);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setError("Impossible de charger les postes");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchPosts();
@@ -62,21 +68,13 @@ const Posts = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Posts</h1>
+    <div className="container">
+      <h1>Postes</h1>
 
       {posts.map(post => (
-        <div
+        <div className="CardPost"
           key={post.id}
           onClick={() => navigate(`/post/${post.id}`)}
-          style={{
-            border: "1px solid #ddd",
-            marginBottom: "1rem",
-            padding: "1rem",
-            borderRadius: "8px",
-            cursor: "pointer",
-            transition: "0.2s",
-          }}
         >
           <strong>{post.username}</strong>{" "}
           ({new Date(post.createdAt).toLocaleDateString()})
@@ -95,10 +93,10 @@ const Posts = () => {
         </button>
       )}
 
-      {!hasMore && <p>Plus de posts à afficher</p>}
+      {!hasMore && <p>Plus de postes à afficher</p>}
 
       {!loading && !error && posts.length === 0 && (
-        <p>Aucun post à afficher</p>
+        <p>Aucun poste à afficher</p>
       )}
     </div>
   );
