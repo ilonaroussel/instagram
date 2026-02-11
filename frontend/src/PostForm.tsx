@@ -8,6 +8,8 @@ interface PostFormProps {
 export default function PostForm({ onPostCreated }: PostFormProps) {
   const [content, setContent] = useState("")
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  const [loading, setLoading] = useState(false)
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
@@ -17,7 +19,6 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
       return;
     }
 
-    // connected user info
     fetch("http://localhost:3001/me", {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -29,8 +30,8 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    setSuccess("")
 
-    // test if user is connected
     if (!user) {
       setError("Utilisateur non connecté")
       return
@@ -40,27 +41,37 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
       setError("Le contenu ne peut pas être vide")
       return
     }
+
     if (content.trim().length < 3) {
       setError("Le contenu doit contenir au moins 3 caractères")
       return
     }
+
     if (content.length > 500) {
       setError("Le contenu ne peut pas dépasser 500 caractères")
       return
     }
 
     try {
+      setLoading(true)  // démarre le loading
+
       const res = await fetch('http://localhost:3001/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, userId: user.id }),
       })
+
       if (!res.ok) throw new Error('Erreur serveur')
+
       const newPost: Post = await res.json()
+
       onPostCreated(newPost)
       setContent("")
+      setSuccess("Post créé avec succès")   // message succès
     } catch {
       setError("Erreur lors de la création du post")
+    } finally {
+      setLoading(false)   // stop loading
     }
   }
 
@@ -80,20 +91,21 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
       </div>
 
       {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
+      {success && <p style={{ color: 'green', marginBottom: '10px' }}>{success}</p>}
 
       <button
         type="submit"
-        disabled={!content.trim()}
+        disabled={!content.trim() || loading}
         style={{
           padding: '10px 20px',
-          backgroundColor: content.trim() ? '#007bff' : '#ccc',
+          backgroundColor: (!content.trim() || loading) ? '#ccc' : '#007bff',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: content.trim() ? 'pointer' : 'not-allowed',
+          cursor: (!content.trim() || loading) ? 'not-allowed' : 'pointer',
         }}
       >
-        Poster
+        {loading ? "Publication..." : "Poster"}   {/* texte dynamique */}
       </button>
     </form>
   )
