@@ -76,19 +76,21 @@ export default function PostForm({ onPostCreated }: PostFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ccc' }}>
-      <h3>Créer un post</h3>
+    <div className='container'>
+      <form onSubmit={handleSubmit} className="FormPost">
+        <h1>Créer un poste</h1>
 
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Écrivez votre post ici..."
-        style={{ width: '100%', height: '100px', padding: '10px', marginBottom: '10px' }}
-      />
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Écrivez votre poste ..."
+          style={{ width: '100%', height: '100px', padding: '10px', marginBottom: '5px' }}
+        />
 
-      <div style={{ marginBottom: '10px', fontSize: '12px', color: '#999' }}>
-        {content.length}/500
-      </div>
+        <div style={{ marginBottom: '10px', fontSize: '12px', color: '#999' }}>
+          {content.length}/500
+        </div>
+
 
       {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
       {success && <p style={{ color: 'green', marginBottom: '10px' }}>{success}</p>}

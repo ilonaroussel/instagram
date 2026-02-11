@@ -6,15 +6,19 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
+import PostDetails from "./pages/PostDetails";
+import Navbar from "./components/navbar";
+
 
 
 function App(){
-  const handlePostCreated = (post: any) => {
+  const handlePostCreated = (post: unknown) => {
     console.log("Post created:", post);
   };
 
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route path="/PostForm" element={<PostForm onPostCreated={handlePostCreated} />} />
         <Route path="/" element={<Feed />} />
@@ -22,6 +26,7 @@ function App(){
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/post/:id" element={<PostDetails />} />
       </Routes>
     </BrowserRouter>
   );

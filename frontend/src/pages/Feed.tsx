@@ -1,4 +1,7 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import './../index.css'
+import './../App.css'
 
 type PostWithUsername = {
   id: number;
@@ -17,78 +20,88 @@ const Posts = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [hasMore, setHasMore] = useState(true);
-
-  const fetchPosts = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch(`http://localhost:3001/posts?offset=${offset}&limit=${PAGE_SIZE}`);
-      if (!res.ok) throw new Error("Erreur serveur");
-
-      const data: PostWithUsername[] = await res.json();
-
-      setPosts(prev => [...prev, ...data]);
-      setOffset(prev => prev + data.length);
-
-      if (data.length < PAGE_SIZE) setHasMore(false);
-    } catch (err) {
-      console.error(err);
-      setError("Impossible de charger les posts");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const navigate = useNavigate();
   const didFetch = useRef(false);
 
-useEffect(() => {
-  if (!didFetch.current) {
-    fetchPosts();
-    didFetch.current = true;
+
+const fetchPosts = async () => {
+  setLoading(true);
+  setError("");
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `http://localhost:3001/posts?offset=${offset}&limit=${PAGE_SIZE}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!res.ok) throw new Error("Erreur serveur");
+
+    const data: PostWithUsername[] = await res.json();
+
+    // add posts
+    setPosts(prev => [...prev, ...data]);
+
+    // Incrémenter l'offset selon ce que le backend a renvoyé
+    setOffset(prev => prev + data.length);
+
+    // Si le backend renvoie moins que PAGE_SIZE → plus de posts
+    if (data.length < PAGE_SIZE) {
+      setHasMore(false);
+    }
+
+  } catch (err) {
+    console.error(err);
+    setError("Impossible de charger les postes");
+  } finally {
+    setLoading(false);
   }
-}, []);
-  
+};
+
   useEffect(() => {
-  const token = localStorage.getItem("token");
-
-  fetch("http://localhost:3001/posts", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then(res => res.json())
-    .then(setPosts)
-    .catch(() => setError("Unauthorized"));
-}, []);
-
+    if (!didFetch.current) {
+      fetchPosts();
+      didFetch.current = true;
+    }
+  }, []);
 
   if (error) return <p>{error}</p>;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Posts</h1>
+    <div className="container">
+      <h2>Publications</h2>
 
       {posts.map(post => (
-        <div
+        <div className="CardPost"
           key={post.id}
-          style={{ border: "1px solid #ddd", marginBottom: "1rem", padding: "1rem", borderRadius: "8px" }}
+          onClick={() => navigate(`/post/${post.id}`)}
         >
-          <strong>{post.username}</strong> ({new Date(post.createdAt).toLocaleDateString()})
+          <strong>{post.username}</strong>{" "}
+          ({new Date(post.createdAt).toLocaleDateString()})
           <p>{post.content}</p>
         </div>
       ))}
 
       {loading && <p>Chargement...</p>}
-      {error && <p>{error}</p>}
 
       {hasMore && !loading && !error && (
-        <button onClick={fetchPosts} style={{ padding: "0.5rem 1rem" }}>Charger plus</button>
+        <button
+          onClick={fetchPosts}
+          style={{ padding: "0.5rem 1rem" }}
+        >
+          Charger plus
+        </button>
       )}
 
-      {!hasMore && <p>Plus de posts à afficher</p>}
-      
+      {!hasMore && <p>Plus de publications à afficher</p>}
+
       {!loading && !error && posts.length === 0 && (
-        <p>Aucun post à afficher</p>
+        <p>Aucune publication à afficher</p>
       )}
     </div>
   );

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 type User = {
   id: number;
@@ -19,11 +21,13 @@ const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("Not logged in");
+      setError("Vous n'êtes pas connecté");
       return;
     }
 
@@ -33,7 +37,7 @@ const Profile = () => {
     })
       .then(res => res.json())
       .then(setUser)
-      .catch(() => setError("Failed to load user info"));
+      .catch(() => setError("Échec du chargement des informations utilisateur"));
 
     // Fetch my posts
     fetch("http://localhost:3001/my-posts", {
@@ -41,27 +45,29 @@ const Profile = () => {
     })
       .then(res => res.json())
       .then(setPosts)
-      .catch(() => setError("Failed to load posts"));
+      .catch(() => setError("Échec du chargement des publications"));
   }, []);
 
   if (error) return <p>{error}</p>;
-  if (!user) return <p>Loading profile...</p>;
+  if (!user) return <p>Chargement du profil...</p>;
 
   return (
-    <div>
-      <h1>Mon profil</h1>
-      <h2>{user.username}</h2>
+    <div className="container">
+      <h2>Mon profil</h2>
+      <h3>{user.username}</h3>
       <p>Email: {user.email}</p>
 
-      <h3>Mes posts</h3>
-      <ul>
+      <h3>Mes publications</h3>
         {posts.map(post => (
-          <li key={post.id}>
-            {post.content} ❤️ {post.likes}{" "}
+          <div
+          className="CardPost"
+            key={post.id}
+            onClick={() => navigate(`/post/${post.id}`)}
+          >
+            {post.content} {post.likes}{" "}
             ({new Date(post.createdAt).toLocaleDateString()})
-          </li>
+          </div>
         ))}
-      </ul>
     </div>
   );
 };
