@@ -1,7 +1,7 @@
 // App.tsx
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 
-import PostForm from "./PostForm";
+import PostForm from "./pages/PostForm";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Feed from "./pages/Feed";

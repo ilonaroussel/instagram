@@ -84,6 +84,6 @@ export const posts: Post[] = [
     userId: 5,
     content: "Lecture du moment 📖",
     likes: 5,
-    createdAt: "2026-02-12"
+    createdAt: "2026-02-6"
   }
 ]
