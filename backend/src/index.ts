@@ -117,15 +117,38 @@ app.post("/posts", (req, res) => {
 
 app.get("/posts/:id", (req, res) => {
   const id = Number(req.params.id);
-
   const post = posts.find(p => p.id === id);
 
   if (!post) {
     return res.status(404).json({ message: "Post introuvable" });
   }
 
-  res.json(post);
+  // optional token read
+  const authHeader = req.headers.authorization;
+  let userId: number | null = null;
+
+  if (authHeader) {
+    try {
+      const token = authHeader.split(" ")[1];
+      const decoded: any = jwt.verify(token, JWT_SECRET);
+      userId = decoded.id;
+    } catch {
+      userId = null;
+    }
+  }
+
+  const user = users.find(u => u.id === post.userId);
+
+  res.json({
+    ...post,
+    username: user?.username || "Unknown",
+    likes: post.likes.length,
+    likedByCurrentUser: userId
+      ? post.likes.includes(userId)
+      : false
+  });
 });
+
 
 // Get comments for a post
 app.get("/posts/:id/comments", (req, res) => {

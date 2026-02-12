@@ -51,19 +51,27 @@ const PostDetails = () => {
 
   // Load post + comments
   useEffect(() => {
-    fetch(`http://localhost:3001/posts/${id}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Erreur");
-        return res.json();
-      })
-      .then(setPost)
-      .catch(() => setError("Post introuvable"));
+  const token = localStorage.getItem("token");
 
-    fetch(`http://localhost:3001/posts/${id}/comments`)
-      .then(res => res.json())
-      .then(setComments)
-      .catch(() => console.log("Erreur chargement commentaires"));
-  }, [id]);
+  fetch(`http://localhost:3001/posts/${id}`, {
+    headers: token
+      ? { Authorization: `Bearer ${token}` }
+      : {}
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Erreur");
+      return res.json();
+    })
+    .then(setPost)
+    .catch(() => setError("Post introuvable"));
+
+  fetch(`http://localhost:3001/posts/${id}/comments`)
+    .then(res => res.json())
+    .then(setComments)
+    .catch(() => console.log("Erreur chargement commentaires"));
+
+}, [id]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
