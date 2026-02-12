@@ -9,6 +9,7 @@ import { registerUser } from "./services/auth";
 import { auth } from "./middleware/auth";
 import { addComment } from "./data/addComment";
 import { comments } from "./data/comments";
+import { toggleLikePost } from "./data/toggleLikePost";
 
 
 
@@ -158,5 +159,25 @@ app.post("/posts/:id/comments", auth, (req, res) => {
   }
 });
 
+app.post("/posts/:id/like", auth, (req, res) => {
+  const postId = Number(req.params.id);
+  const userId = (req as any).user.id;
+
+  const post = posts.find(p => p.id === postId);
+  if (!post) return res.sendStatus(404);
+
+  const liked = post.likes.includes(userId);
+
+  if (liked) {
+    post.likes = post.likes.filter(id => id !== userId);
+  } else {
+    post.likes.push(userId);
+  }
+
+  res.json({
+    liked: !liked,
+    likesCount: post.likes.length
+  });
+});
 
 

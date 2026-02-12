@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import type { User } from "../../../backend/src/bdd/bdd";
 
 type Post = {
+  
   id: number;
   username: string;
   content: string;
-  likes: number;
+  likes: number [];
+  likedByCurrentUser: any;
   createdAt: string;
 };
 
@@ -116,6 +118,27 @@ const PostDetails = () => {
     }
   };
 
+  const handleLike = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(
+    `http://localhost:3001/posts/${post.id}/like`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await res.json();
+
+  setPost(prev =>
+    prev ? { ...prev, likes: data.likesCount, likedByCurrentUser: data.liked, } : prev
+  );
+};
+
+
   if (error && !post) return <p>{error}</p>;
   if (!post) return <p>Chargement...</p>;
 
@@ -128,6 +151,11 @@ const PostDetails = () => {
           <p>{post.content}</p>
           <p>J'aimes: {post.likes}</p>
           <p>{new Date(post.createdAt).toLocaleString()}</p>
+
+          <button onClick={handleLike}>
+            {post.likedByCurrentUser ? "❤️" : "🤍"} {post.likes}
+          </button>
+
 
           <form onSubmit={handleSubmit} className="FormComment">
             <textarea
