@@ -8,6 +8,7 @@ import Feed from "./pages/Feed";
 import Profile from "./pages/Profile";
 import PostDetails from "./pages/PostDetails";
 import Navbar from "./components/Navbar";
+import ProfilePublic from "./pages/ProfilePublic";
 
 
 
@@ -29,6 +30,7 @@ function App(){
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/users/:id" element={<ProfilePublic />} />
         <Route path="/post/:id" element={<PostDetails/>} />
       </Routes>
     </BrowserRouter>

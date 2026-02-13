@@ -19,6 +19,17 @@
     cursor: pointer;
 }
 
+.CardPostProfil{
+    border: 1px solid #ddd;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 nav{
   display: flex;
   justify-content: space-between;
@@ -61,10 +72,6 @@ nav{
 
 .FormPost{
   padding: 15px;
-}
-
-button{
-  border-radius: 5px;
 }
 
 .DetailPost{

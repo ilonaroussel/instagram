@@ -68,6 +68,30 @@ app.get("/me", auth, (req, res) => {
   res.json({ id: user.id, username: user.username, email: user.email });
 });
 
+// Public profile
+app.get("/users/:id", (req, res) => {
+  const userId = Number(req.params.id);
+
+  const user = users.find(u => u.id === userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const userPosts = posts
+    .filter(post => post.userId === userId)
+    .map(post => ({
+      ...post,
+      username: user.username
+    }));
+
+  res.json({
+    id: user.id,
+    username: user.username,
+    posts: userPosts
+  });
+});
+
+
 app.get("/my-posts", auth, (req, res) => {
   const userId = (req as any).user.id;
 
@@ -80,6 +104,31 @@ app.get("/my-posts", auth, (req, res) => {
 
   res.json(myPosts);
 });
+
+app.delete("/posts/:id", auth, (req, res) => {
+  const userId = (req as any).user.id;
+  const postId = Number(req.params.id);
+
+  if (isNaN(postId)) {
+    return res.status(400).json({ message: "ID invalide" });
+  }
+
+  const postIndex = posts.findIndex(p => p.id === postId);
+
+  if (postIndex === -1) {
+    return res.status(404).json({ message: "Post introuvable" });
+  }
+
+  if (posts[postIndex].userId !== userId) {
+    return res.status(403).json({ message: "Non autorisé" });
+  }
+
+  posts.splice(postIndex, 1);
+
+  res.json({ message: "Post supprimé" });
+});
+
+
 
 app.get("/posts", (req, res) => {
   const offset = parseInt(req.query.offset as string) || 0;
@@ -106,21 +155,21 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
-app.post("/posts", (req, res) => {
-  try {
-    const post = addPost(req.body.content, req.body.userId)
-    res.status(201).json(post)
-  } catch (error) {
-    res.status(400).json({ message: (error as Error).message })
-  }
-})
+// app.post("/posts", (req, res) => {
+//   try {
+//     const post = addPost(req.body.content, req.body.userId)
+//     res.status(201).json(post)
+//   } catch (error) {
+//     res.status(400).json({ message: (error as Error).message })
+//   }
+// })
 
 app.get("/posts/:id", (req, res) => {
   const id = Number(req.params.id);
   const post = posts.find(p => p.id === id);
 
   if (!post) {
-    return res.status(404).json({ message: "Post introuvable" });
+    return res.status(404).json({ message: "Post not found" });
   }
 
   // optional token read
@@ -146,6 +195,15 @@ app.get("/posts/:id", (req, res) => {
     likedByCurrentUser: userId
       ? post.likes.includes(userId)
       : false
+  const user = users.find(u => u.id === post.userId);
+
+  res.json({
+    id: post.id,
+    userId: post.userId,
+    content: post.content,
+    likes: post.likes,
+    createdAt: post.createdAt,
+    username: user?.username || "user"
   });
 });
 
