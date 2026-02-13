@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { User } from "../../../backend/src/bdd/bdd";
+import { useNavigate } from "react-router-dom";
 
 type Post = {
   id: number;
+  userId: number;
   username: string;
   content: string;
   likes: number;
@@ -28,6 +30,7 @@ const PostDetails = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
   const token = localStorage.getItem("token");
@@ -124,7 +127,12 @@ const PostDetails = () => {
       <div className="DetailPost">
         <div>
           <h2>Détail de la publication</h2>
-          <strong>{post.username}</strong>
+          <strong
+            style={{ cursor: "pointer", color: "blue" }}
+            onClick={() => navigate(`/users/${post.userId}`)}
+            >
+            {post.username} 
+          </strong>
           <p>{post.content}</p>
           <p>J'aimes: {post.likes}</p>
           <p>{new Date(post.createdAt).toLocaleString()}</p>

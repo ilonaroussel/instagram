@@ -67,6 +67,30 @@ app.get("/me", auth, (req, res) => {
   res.json({ id: user.id, username: user.username, email: user.email });
 });
 
+// Public profile
+app.get("/users/:id", (req, res) => {
+  const userId = Number(req.params.id);
+
+  const user = users.find(u => u.id === userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const userPosts = posts
+    .filter(post => post.userId === userId)
+    .map(post => ({
+      ...post,
+      username: user.username
+    }));
+
+  res.json({
+    id: user.id,
+    username: user.username,
+    posts: userPosts
+  });
+});
+
+
 app.get("/my-posts", auth, (req, res) => {
   const userId = (req as any).user.id;
 
@@ -145,10 +169,19 @@ app.get("/posts/:id", (req, res) => {
   const post = posts.find(p => p.id === id);
 
   if (!post) {
-    return res.status(404).json({ message: "Post introuvable" });
+    return res.status(404).json({ message: "Post not found" });
   }
 
-  res.json(post);
+  const user = users.find(u => u.id === post.userId);
+
+  res.json({
+    id: post.id,
+    userId: post.userId,
+    content: post.content,
+    likes: post.likes,
+    createdAt: post.createdAt,
+    username: user?.username || "user"
+  });
 });
 
 // Get comments for a post
