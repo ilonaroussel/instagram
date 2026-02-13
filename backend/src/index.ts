@@ -155,14 +155,14 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
-// app.post("/posts", (req, res) => {
-//   try {
-//     const post = addPost(req.body.content, req.body.userId)
-//     res.status(201).json(post)
-//   } catch (error) {
-//     res.status(400).json({ message: (error as Error).message })
-//   }
-// })
+app.post("/posts", (req, res) => {
+  try {
+    const post = addPost(req.body.content, req.body.userId)
+    res.status(201).json(post)
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message })
+  }
+})
 
 app.get("/posts/:id", (req, res) => {
   const id = Number(req.params.id);
@@ -195,16 +195,7 @@ app.get("/posts/:id", (req, res) => {
     likedByCurrentUser: userId
       ? post.likes.includes(userId)
       : false
-  const user = users.find(u => u.id === post.userId);
-
-  res.json({
-    id: post.id,
-    userId: post.userId,
-    content: post.content,
-    likes: post.likes,
-    createdAt: post.createdAt,
-    username: user?.username || "user"
-  });
+});
 });
 
 
