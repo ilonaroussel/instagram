@@ -9,7 +9,8 @@ export interface Post {
   id: number
   userId: number
   content: string
-  likes: number
+  likes: number []
+  likedByCurrentUser: boolean
   createdAt: string
 }
 

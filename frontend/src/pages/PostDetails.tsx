@@ -4,11 +4,13 @@ import type { User } from "../../../backend/src/bdd/bdd";
 import { useNavigate } from "react-router-dom";
 
 type Post = {
+  
   id: number;
   userId: number;
   username: string;
   content: string;
-  likes: number;
+  likes: number [];
+  likedByCurrentUser: any;
   createdAt: string;
 };
 
@@ -52,19 +54,27 @@ const PostDetails = () => {
 
   // Load post + comments
   useEffect(() => {
-    fetch(`http://localhost:3001/posts/${id}`)
-      .then(res => {
-        if (!res.ok) throw new Error("Erreur");
-        return res.json();
-      })
-      .then(setPost)
-      .catch(() => setError("Post introuvable"));
+  const token = localStorage.getItem("token");
 
-    fetch(`http://localhost:3001/posts/${id}/comments`)
-      .then(res => res.json())
-      .then(setComments)
-      .catch(() => console.log("Erreur chargement commentaires"));
-  }, [id]);
+  fetch(`http://localhost:3001/posts/${id}`, {
+    headers: token
+      ? { Authorization: `Bearer ${token}` }
+      : {}
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Erreur");
+      return res.json();
+    })
+    .then(setPost)
+    .catch(() => setError("Post introuvable"));
+
+  fetch(`http://localhost:3001/posts/${id}/comments`)
+    .then(res => res.json())
+    .then(setComments)
+    .catch(() => console.log("Erreur chargement commentaires"));
+
+}, [id]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,6 +129,27 @@ const PostDetails = () => {
     }
   };
 
+  const handleLike = async () => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(
+    `http://localhost:3001/posts/${post.id}/like`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await res.json();
+
+  setPost(prev =>
+    prev ? { ...prev, likes: data.likesCount, likedByCurrentUser: data.liked, } : prev
+  );
+};
+
+
   if (error && !post) return <p>{error}</p>;
   if (!post) return <p>Chargement...</p>;
 
@@ -136,6 +167,11 @@ const PostDetails = () => {
           <p>{post.content}</p>
           <p>J'aimes: {post.likes}</p>
           <p>{new Date(post.createdAt).toLocaleString()}</p>
+
+          <button onClick={handleLike}>
+            {post.likedByCurrentUser ? "❤️" : "🤍"} {post.likes}
+          </button>
+
 
           <form onSubmit={handleSubmit} className="FormComment">
             <textarea

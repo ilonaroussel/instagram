@@ -6,7 +6,8 @@ export function addPost(content: string, userId: number): Post {
     id: posts.length + 1,
     userId: userId,
     content: content,
-    likes: 0,
+    likes: [],
+    likedByCurrentUser:false,
     //createdAt: new Date().toISOString()
     createdAt: new Date().toISOString().split('T')[0]  // "2026-02-10"
   }

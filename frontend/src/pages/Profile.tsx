@@ -13,6 +13,7 @@ type Post = {
   username: string;
   content: string;
   likes: number;
+  likedByCurrentUser: boolean;
   createdAt: string;
 };
 

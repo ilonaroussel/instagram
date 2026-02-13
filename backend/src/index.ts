@@ -9,6 +9,7 @@ import { registerUser } from "./services/auth";
 import { auth } from "./middleware/auth";
 import { addComment } from "./data/addComment";
 import { comments } from "./data/comments";
+import { toggleLikePost } from "./data/toggleLikePost";
 
 
 
@@ -165,13 +166,35 @@ app.listen(PORT, () => {
 
 app.get("/posts/:id", (req, res) => {
   const id = Number(req.params.id);
-
   const post = posts.find(p => p.id === id);
 
   if (!post) {
     return res.status(404).json({ message: "Post not found" });
   }
 
+  // optional token read
+  const authHeader = req.headers.authorization;
+  let userId: number | null = null;
+
+  if (authHeader) {
+    try {
+      const token = authHeader.split(" ")[1];
+      const decoded: any = jwt.verify(token, JWT_SECRET);
+      userId = decoded.id;
+    } catch {
+      userId = null;
+    }
+  }
+
+  const user = users.find(u => u.id === post.userId);
+
+  res.json({
+    ...post,
+    username: user?.username || "Unknown",
+    likes: post.likes.length,
+    likedByCurrentUser: userId
+      ? post.likes.includes(userId)
+      : false
   const user = users.find(u => u.id === post.userId);
 
   res.json({
@@ -183,6 +206,7 @@ app.get("/posts/:id", (req, res) => {
     username: user?.username || "user"
   });
 });
+
 
 // Get comments for a post
 app.get("/posts/:id/comments", (req, res) => {
@@ -216,5 +240,25 @@ app.post("/posts/:id/comments", auth, (req, res) => {
   }
 });
 
+app.post("/posts/:id/like", auth, (req, res) => {
+  const postId = Number(req.params.id);
+  const userId = (req as any).user.id;
+
+  const post = posts.find(p => p.id === postId);
+  if (!post) return res.sendStatus(404);
+
+  const liked = post.likes.includes(userId);
+
+  if (liked) {
+    post.likes = post.likes.filter(id => id !== userId);
+  } else {
+    post.likes.push(userId);
+  }
+
+  res.json({
+    liked: !liked,
+    likesCount: post.likes.length
+  });
+});
 
 
